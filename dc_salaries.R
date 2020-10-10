@@ -1,16 +1,35 @@
 # DC Salaries
 # Evan Kramer
 
+stop("Is there an opportunity to use the `reclin()` package?")
+
+
 # Set up
 options(java.parameters = "-Xmx16G")
-library(tidyverse)
-library(lubridate)
-library(haven)
-library(httr)
-library(rvest)
-library(pdftools)
-library(readxl)
 setwd("U:/dc_public_salaries")
+p = c("tidyverse", "lubridate", "haven", "httr", "rvest", "pdftools", "readxl")
+for(i in p) {
+  if(!i %in% installed.packages()) {
+    install.packages(i)
+  }
+  library(i, character.only = T)
+}
+
+#information
+
+# GET(
+  # "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Property_and_Land_WebMercator/MapServer/39/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+# ) %>% 
+  # content()
+
+#ip address for machine
+# options(shiny.host = '10.25.10.61')
+
+#The port you are point to.
+# options(shiny.port = 88)
+
+
+
 
 # Scrape from webpage?
 # Extract file urls
@@ -66,6 +85,9 @@ lt_names = mutate(lt_names, lt_name = str_sub(link, lt_name_start, lt_name_end))
 
 # Download files from internet
 for(f in 1:nrow(salary_files)) {
+  if(!dir.exists("C:/Users/evan.kramer/Documents/Raw Salary Files")) {
+    dir.create("C:/Users/evan.kramer/Documents/Raw Salary Files")
+  }
   # Check if the file exists then download
   if(!file.exists(str_c(getwd(), "/Raw Salary Files/", salary_files$file_name[f]))) {
     download.file(
@@ -79,6 +101,11 @@ for(f in 1:nrow(salary_files)) {
   }
 }
 rm(f)
+
+
+stop("No error")
+
+
 
 # Extract information using `pdf_text`
 temp = pdf_text(
