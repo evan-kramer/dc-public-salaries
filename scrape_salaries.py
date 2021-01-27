@@ -5,7 +5,6 @@ Evan Kramer
 '''
 # Set up
 import os
-os.chdir('U:/dc_public_salaries')
 from urllib.request import urlopen, Request
 import requests
 from bs4 import BeautifulSoup
@@ -22,30 +21,42 @@ html = urlopen(Request('https://dchr.dc.gov/public-employee-salary-information',
 bs = BeautifulSoup(html.read(), "lxml")
 
 # Check if files are already there
-file_list = 
+os.chdir('U:/dc_public_salaries/Raw Salary Files/')
+file_list = pd.DataFrame({'file': os.listdir(),
+                          'file_date': [''] * len(os.listdir())})
+
+# file_list.file[file_list.file.str.contains('.csv$') == False]
 
 # Find salary files
 for i in bs.findAll('a'):
     if '.pdf' in str(i) and 'employee' in str(i):
-        # Extract url
+        # Extract url and file date
         url = re.search('<a href="(.*?)"', str(i)).group(1)
         filename = re.search('attachments/(.*?)$', url).group(1)
-        # Download file
-        r = requests.get(url, headers = hdrs, stream = True)
-        # Write file to disk
-        try:
-            with open('U:/dc_public_salaries/Raw Salary Files/' + filename, 'wb') as f:
-                f.write(r.content)
-        except:
-            pass
+        filedate = re.search('as of (.*?)</a>', str(i)).group(1)
+        file_list.file_date[file_list.file == filename] = filedate
+        # Check whether file is already downloaded
+        if filename not in file_list:
+            # Download file
+            r = requests.get(url, headers = hdrs, stream = True)
+            # Write file to disk
+            try:
+                with open('U:/dc_public_salaries/Raw Salary Files/' + filename, 'wb') as f:
+                    f.write(r.content)
+            except:
+                pass
     else:
         pass
 
 # Read from files
-os.chdir('U:/dc_public_salaries/Raw Salary Files/')
-for f in os.listdir('U:/dc_public_salaries/Raw Salary Files/'):
-    temp = tabula.read_pdf(f, pages = 'all').to_csv(f.replace('.pdf', '.csv'),
-                                                    index = False)
-        
+for f in os.listdir():
+    file = f.replace('.pdf', '.csv')
+    if file not in os.listdir():
+        try:
+            tabula.read_pdf(f, pages = 'all').to_csv(file, index = False)
+        except:
+            pass
+    else:
+        pass
 # https://medium.com/better-programming/convert-tables-from-pdfs-to-pandas-with-python-d74f8ac31dc2
 # https://stackabuse.com/download-files-with-python/
