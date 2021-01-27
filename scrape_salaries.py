@@ -21,6 +21,9 @@ hdrs = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20
 html = urlopen(Request('https://dchr.dc.gov/public-employee-salary-information', headers = hdrs))
 bs = BeautifulSoup(html.read(), "lxml")
 
+# Check if files are already there
+file_list = 
+
 # Find salary files
 for i in bs.findAll('a'):
     if '.pdf' in str(i) and 'employee' in str(i):
