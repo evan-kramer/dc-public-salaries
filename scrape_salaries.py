@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 '''
 Evan Kramer
-10/10/2020
+4/7/2021
 '''
+# https://medium.com/better-programming/convert-tables-from-pdfs-to-pandas-with-python-d74f8ac31dc2
+# https://stackabuse.com/download-files-with-python/
 # Set up
 import os
 from urllib.request import urlopen, Request
@@ -25,8 +27,6 @@ os.chdir('U:/dc_public_salaries/Raw Salary Files/')
 file_list = pd.DataFrame({'file': os.listdir(),
                           'file_date': [''] * len(os.listdir())})
 
-# file_list.file[file_list.file.str.contains('.csv$') == False]
-
 # Find salary files
 for i in bs.findAll('a'):
     if '.pdf' in str(i) and 'employee' in str(i):
@@ -36,7 +36,7 @@ for i in bs.findAll('a'):
         filedate = re.search('as of (.*?)</a>', str(i)).group(1)
         file_list.file_date[file_list.file == filename] = filedate
         # Check whether file is already downloaded
-        if filename not in file_list:
+        if filename not in list(file_list.file):
             # Download file
             r = requests.get(url, headers = hdrs, stream = True)
             # Write file to disk
@@ -58,5 +58,7 @@ for f in os.listdir():
             pass
     else:
         pass
-# https://medium.com/better-programming/convert-tables-from-pdfs-to-pandas-with-python-d74f8ac31dc2
-# https://stackabuse.com/download-files-with-python/
+
+# Clean files
+file    
+    
